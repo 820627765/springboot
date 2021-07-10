@@ -1,0 +1,40 @@
+1，EnableAutoConfigurationImportSelector 这是一个组件导入选择器，是ImportSelector的子类
+   对应的 selectImports 方法在其父类 AutoConfigurationImportSelector 中，看源码如下：
+   可以从源码看出，要导入IOC容器的组件都是以“组件的全类名数组”方式导入的，这是@Import(组件选择器实现类.class) 的作用。
+
+   最终：该方法返回了很多的自动配置类(xxxAutoConfiguration)，每一个自动配置类都代表某一种场景的自动配置类。这些自动配置类的作用将会给容器中导入
+   对应场景正常运行所需要的必须的 Bean。如 AopAutoConfiguration 自动配置类，会给我们配置好aop的功能。因此避免开发人员自己去配置他们，减轻开发人员的负担
+   不过，这也会造成开发人员对底层并不了解。
+
+   那么，该方法去哪儿拿到的这些自动配置类全类名呢？
+   看源码可知，该方法会从“类路径下的 META-INF/spring.factories 文件中获取 EnableAutoConfiguration 指定的值，并将这写自动配置类导入到容器中，
+   如此自动配置类就生效了，就能帮助我们来自动配置了，如下
+   org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.springframework.boot.autoconfigure.aop.AopAutoConfiguration,xxx
+   多个值用逗号分割。
+
+   可以看出，springboot 框架的所有自动配置类都存在于 spring-boot-autoconfigure 包下。J2EE的整体整合自动配置都该包下。
+
+   @Override
+   	public String[] selectImports(AnnotationMetadata annotationMetadata) {
+   		if (!isEnabled(annotationMetadata)) {
+   			return NO_IMPORTS;
+   		}
+   		try {
+   			AutoConfigurationMetadata autoConfigurationMetadata = AutoConfigurationMetadataLoader
+   					.loadMetadata(this.beanClassLoader);
+   			AnnotationAttributes attributes = getAttributes(annotationMetadata);
+   			List<String> configurations = getCandidateConfigurations(annotationMetadata,
+   					attributes);
+   			configurations = removeDuplicates(configurations);
+   			configurations = sort(configurations, autoConfigurationMetadata);
+   			Set<String> exclusions = getExclusions(annotationMetadata, attributes);
+   			checkExcludedClasses(configurations, exclusions);
+   			configurations.removeAll(exclusions);
+   			configurations = filter(configurations, autoConfigurationMetadata);
+   			fireAutoConfigurationImportEvents(configurations, exclusions);
+   			return configurations.toArray(new String[configurations.size()]);
+   		}
+   		catch (IOException ex) {
+   			throw new IllegalStateException(ex);
+   		}
+   	}

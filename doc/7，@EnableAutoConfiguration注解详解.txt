@@ -1,0 +1,14 @@
+1，@EnableAutoConfiguration 注解的作用是“开启自动配置”功能。
+   以前我们需要自己写xml配置的组件，SpringBoot会帮我们自动配置。@EnableAutoConfiguration注解
+   的作用就是告诉SpringBoot开启自动配置功能。
+
+2，@EnableAutoConfiguration 的注解定义如下：
+@AutoConfigurationPackage //该注解表示自动配置包，该注解的作用会扫描标注当前注解类所在的包及子包下的所有组件(@Service...)
+@Import(EnableAutoConfigurationImportSelector.class)
+public @interface EnableAutoConfiguration {
+	String ENABLED_OVERRIDE_PROPERTY = "spring.boot.enableautoconfiguration";
+	Class<?>[] exclude() default {};
+	String[] excludeName() default {};
+}
+
+3，@Import(EnableAutoConfigurationImportSelector.class)

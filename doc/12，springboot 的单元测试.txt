@@ -1,0 +1,13 @@
+
+如下即可直接使用：
+
+@RunWith(SpringRunner.class)   //运行环境是 Spring
+@SpringBootTest                //是SpringBoot 的单元测试
+public class SpringBootTest{
+    @Autowired
+    private Person person;
+
+    public void t1(){
+        System.out.println(person);
+    }
+}

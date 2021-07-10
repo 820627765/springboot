@@ -1,0 +1,26 @@
+1，springboot 的由来
+springboot是spring团队在2014年伴随spring4.0版本开发出的一个框架。
+
+2，springboot简介
+Spring Boot来简化spring应用开发。
+整个spring技术栈的一个大整合。
+
+3，springboot优点
+- 快速创建独立运行的spring项目以及与主流框架集成。
+- 使用嵌入式的Servlet容器，应用无需打成war包
+- 提供特别多的 starters（自动依赖与版本控制）
+- 大量的自动配置，简化开发，也可以修改默认值
+- 无需配置xml，无代码生成，开箱即用
+- 准生产环境的运行时应用监控
+- 与云计算的天然集成
+
+4，springboot在项目中是做什么用的？
+用于开发分布式项目中的微服务的具体服务。是spring cloud 的基础，即spring cloud 依赖于spring boot。
+
+5，本次案例环境说明
+jdk1.8
+springBoot 1.5.9.RELEASE
+
+
+
+

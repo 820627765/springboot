@@ -1,0 +1,7 @@
+1，@Configuration 是spring框架的配置类。配置类 就相当于一个 xml配置文件。
+
+2，@Configuration 的定义如下：
+@Component  //表示被 @Configuration 标注的类，即是一个配置类，也是一个 @Component 的组件，本身也会被spring容器管理
+public @interface Configuration {
+	String value() default "";
+}

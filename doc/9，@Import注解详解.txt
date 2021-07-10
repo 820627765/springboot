@@ -1,0 +1,36 @@
+1，@Import 是Spring的底层注解,作用是给容器中导入一个组件，导入的组件由指定的类来决定。
+原来我们给容器中注册组件是“包扫描+组件标注注解（@Controller、@Service、@Repository...）”。[局限于自己写的类]
+但这种方式有局限性，比如我们需要一个第三方的类需要导入，但是代码本身没有加注解，那就不行了。
+这时候就可以使用 @Import 来导入 或 使用 @Bean 的方式
+
+2，@Import 如何使用？
+方式一：@Import(要导入容器中的组件)
+    @Import(Color.class)  表示导入Color组件，id默认是组件的全类名。
+    @Import({Color.class,Red.class}) 表示导入多个组件，id默认为组件的全类名
+
+方式二：@Import(ImportSelector的实现类.class)  使用导入选择器的方式
+    @Import({MyImportSelector.class})
+    //自定义逻辑，返回要导入的组件
+    public class MyImportSelector implements ImportSelector{
+        @Override
+        public String[] selectImports(AnnotationMetadata importingClassMetadata){
+            //该方法的返回值就是要导入到容器中的组件全类名。
+            //该方法的参数 AnnotationMetadata ，就是标注@Import注解的类的所有注解信息，想要获取当前标注了@Import 的其他注解
+            //都可通过这个对象拿到。
+
+            //需要指定要导入组件的“全类名”，且导入的bean的id是全类名
+            return new String[]{"com.example.Person"};
+        }
+    }
+
+方式三：@Import({ImportBeanDefinitionRegistrar的实现类.class})
+    public class MyImportBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar{
+        @Override
+        public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry){
+            // AnnotationMetadata 参数对象可以获取到当前标注@Import 注解的类上的所有注解信息
+            // BeanDefinitionRegistry 对象表示Bean定义注册器，可以通过该对象向容器中注册Bean定义
+
+            //向容器中注入一个名字为 person 的Person.class 类的Bean定义
+            registry.registerBeanDefinition("person",new RootBeanDefinition(Person.class));
+        }
+    }

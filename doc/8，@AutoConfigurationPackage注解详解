@@ -1,0 +1,27 @@
+1，@AutoConfigurationPackage注解表示自动配置包。
+
+2，@AutoConfigurationPackage注解的定义如下：
+@Import(AutoConfigurationPackages.Registrar.class)  //@Import 是Spring的底层注解,作用是给容器中导入指定的组件
+public @interface AutoConfigurationPackage {
+
+}
+
+3，@Import 所指定的 AutoConfigurationPackages.Registrar.class 类给容器中导入了哪些组件呢？
+- 先看一下源码
+@Order(Ordered.HIGHEST_PRECEDENCE)
+static class Registrar implements ImportBeanDefinitionRegistrar, DeterminableImports {
+    @Override
+    public void registerBeanDefinitions(AnnotationMetadata metadata,BeanDefinitionRegistry registry) {
+        //new PackageImport(metadata).getPackageName() 将拿到标注了引用该Registrar的@Import 所在的类的包名
+        //而register方法的作用就是将“第二个参数的包及其子包”下的所有组件（@Service、@Controller....）扫描到Spring容器中
+        //其实是向容器中注册了这些组件的Bean定义。
+        register(registry, new PackageImport(metadata).getPackageName());
+    }
+    @Override
+    public Set<Object> determineImports(AnnotationMetadata metadata) {
+        return Collections.<Object>singleton(new PackageImport(metadata));
+    }
+}
+
+- 结论
+因此 @AutoConfigurationPackage 注解的作用就是使用 @Import 的方式扫描标注该注解对应类所在的包及子包下的所有组件。

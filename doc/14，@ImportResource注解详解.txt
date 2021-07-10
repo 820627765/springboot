@@ -1,0 +1,20 @@
+1，@ImportResource 的作用是导入 Spring 的配置文件（即xml配置文件），让配置文件里面的配置内容生效。
+  如果想要自己的spring 配置文件生效，就可以使用@ImportResource 引入，引入方式如下：
+
+  @ImportResource(locations={"classpath:beans.xml"})  //通过这种方式引入
+  @Configuration
+  public class MyConfig{}
+
+2，如新建了一个 beans.xml,内容如下
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="helloService" class="com.example.HelloService"></bean>
+
+</beans>
+
+3，注意事项
+   虽然这种方式可以使用，但是SpringBoot 推荐使用”全注解的方式“，并不推荐使用@ImportResource 以如xml配置文件。
+   而是推荐使用 配置类的形式。

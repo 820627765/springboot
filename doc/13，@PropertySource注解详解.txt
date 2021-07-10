@@ -1,0 +1,20 @@
+1,@PropertySource 用于加载指定的配置文件，对比@ConfigurationProperties 的区别在于
+  @ConfigurationProperties 默认是从”全局配置文件“中取值，
+  而@PropertySource用于加载单独的配置文件的内容。这样就有利于避免”全局配置文件太大“。
+
+2，怎么使用 @PropertySource呢？
+   @Component  //是容器的组件
+   @PropertySource(value={"classpath:person.properties"}) //加载类路径下的person.properties 文件并将其配置绑定到注解所
+                                                          //在类的属性中
+   public class Person{
+       private String lastName;
+       private Integer age;
+       private Boolean boss;
+       private Date birth;
+
+       private Map<String,Object> maps;
+       private List<Object> lists;
+       private Dog dog;
+
+       //getter setter
+   }

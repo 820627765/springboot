@@ -1,0 +1,57 @@
+1，helloword需要实现一个功能：浏览器发送hello请求，服务器接收并处理，响应hello word字符串；
+2，创建springboot 应用步骤
+    1）创建一个maven工程 springboot-helloword
+    2）导入springboot 相关的依赖
+       <parent>
+           <groupId>org.springframework.boot</groupId>
+           <artifactId>spring-boot-starter-parent</artifactId>
+           <version>1.5.9.RELEASE</version>
+       </parent>
+
+       <dependencies>
+           <dependency>
+               <groupId>org.springframework.boot</groupId>
+               <artifactId>spring-boot-starter-web</artifactId>
+           </dependency>
+       </dependencies>
+
+    3）编写主启动类，这个启动类就是用来启动 springboot 应用
+        /**
+         * @SpringBootApplication 来标注一个主程序类，说明这是一个Spring boot 应用，被标注的类是SpringBoot的主配置类
+         */
+        @SpringBootApplication
+        public class MainApplication {
+            public static void main(String[] args) {
+                //运行这句话就会启动springboot应用
+                SpringApplication.run(MainApplication.class, args);
+            }
+        }
+
+    4）编写控制器 HelloController
+        @Controller
+        public class HelloController {
+            @ResponseBody
+            @GetMapping("/hello")
+            public String hello() {
+                return "hello Word";
+            }
+        }
+
+    5）测试
+        1.运行MainApplication 的 main方法
+        2.运行浏览器访问：http://localhost:8080/hello 即可
+
+3，部署springboot应用
+    1.我们需要将springboot应用创建为一个可执行的 jar 包，只需要在pom.xml中加入如下构建插件，该插件在打包时
+      会将应用打成一个可执行的jar包
+      <build>
+          <plugins>
+              <plugin>
+                  <groupId>org.springframework.boot</groupId>
+                  <artifactId>spring-boot-maven-plugin</artifactId>
+              </plugin>
+          </plugins>
+      </build>
+    2，然后运行maven 的package 命令，就会在target 目录下生成可执行的jar包了
+    3，使用 java -jar 第二步的jar包，即可运行这个项目
+      可以看出，这时已经不需要部署tomcat环境了。确实很方便

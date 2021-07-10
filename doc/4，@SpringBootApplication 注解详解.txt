@@ -1,0 +1,20 @@
+1,@SpringBootApplication 的作用
+    被该注解标注的类是SpringBoot应用的主配置类，也是spring应用的启动类，需要运行该类的main方法来启动springboot应用。
+
+2，@SpringBootApplication的定义
+... 省略不重要的
+@SpringBootConfiguration  //这是SpringBoot的配置类注解
+@EnableAutoConfiguration  //表示开启自动配置功能的注解
+@ComponentScan(excludeFilters = {
+		@Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
+		@Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class) })
+public @interface SpringBootApplication {
+	@AliasFor(annotation = EnableAutoConfiguration.class, attribute = "exclude")
+	Class<?>[] exclude() default {};
+	@AliasFor(annotation = EnableAutoConfiguration.class, attribute = "excludeName")
+	String[] excludeName() default {};
+	@AliasFor(annotation = ComponentScan.class, attribute = "basePackages")
+	String[] scanBasePackages() default {};
+	@AliasFor(annotation = ComponentScan.class, attribute = "basePackageClasses")
+	Class<?>[] scanBasePackageClasses() default {};
+}

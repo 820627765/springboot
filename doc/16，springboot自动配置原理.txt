@@ -1,0 +1,89 @@
+1，自动配置原理
+1）SpringBoot 启动的时候加载主配置类，开启了自动配置功能 @EnableAutoConfiguration，前面已经讲过
+   该注解会利用EnableAutoConfigurationImportSelector 选择器会从“类路径下扫描所有jar包”的 META-INF/spring.factories
+   文件，然后将这些文件的内容包装成 Properties 对象，然后从这个对象中获取 key为 EnableAutoConfiguration.class 类全类名的值，
+   这些值就是各个场景的“自动配置类”的全类名，然后利用@Import 会将这些自动配置类加入到IOC容器中。
+   如：org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration 类。
+
+   这些自动配置类的作用就是完成“自动配置”，从而不需要开发人员自己配置。
+
+   总结自动配置类的用法：根据配置类配置的不同条件来判断当前配置类是否生效。如果生效了就会给容器中“添加一些具有特定功能的组件”，而这个组件中
+                    的配置值，就会从指定的 XxxProperties 类对象来获取，这个配置类是通过如 @EnableConfigurationProperties(HttpEncodingProperties.class)
+                    注解来使其生效和绑定配置文件配置的。
+                    所以，我们在配置文件里配置的内容，其实就是这些自动配置类所需要的 XxxProperties 配置类所需要绑定的属性。
+
+2）以org.springframework.boot.autoconfigure.web.HttpEncodingAutoConfiguration 自动配置类为例，看看是怎么完成自动配置的。
+   1）该类的类定义如下：
+     @Configuration   // 表示这是一个配置类，就像之前的spring的xml配置文件一样。
+     @EnableConfigurationProperties(HttpEncodingProperties.class) //@EnableConfigurationProperties 注解的作用表示
+          //启用指定类配置的 @ConfigurationProperties 功能（即让指定类的 @ConfigurationProperties 注解生效，很多第三方的配置类
+          //并没有纳入spring容器，所以需要使用@EnableConfigurationProperties 注解来指定其生效，生效后配置文件的内容就和指定的类属性绑定在一起了），
+          //并且指定的类也会被加入到容器中。
+     @ConditionalOnWebApplication //判断当前应用是Web应用当前自动配置类才生效，该注解底层使用 Spring底层的@Conditional注解
+     @ConditionalOnClass(CharacterEncodingFilter.class) //判断当前项目容器中是否存在指定类对象，如果有当前自动配置类才生效
+     @ConditionalOnProperty(prefix = "spring.http.encoding", value = "enabled", matchIfMissing = true) //判断配置文件中是否存在
+          //prefix.value 指定的配置(spring.http.encoding.enabled)，matchIfMissing = true 表示如果没有找到也默认值为true，如果存在
+          //则看其配置的是什么值，如果最终结果为 false，则该配置类不生效。
+     public class HttpEncodingAutoConfiguration {
+
+     	private final HttpEncodingProperties properties;
+
+        //当类只有一个有参构造器时，spring在创建对象时，会调用该构造器创建对象，其参数会从容器中拿。
+     	public HttpEncodingAutoConfiguration(HttpEncodingProperties properties) {
+     		this.properties = properties;
+     	}
+
+     	@Bean
+     	@ConditionalOnMissingBean(CharacterEncodingFilter.class)
+     	public CharacterEncodingFilter characterEncodingFilter() {
+     		CharacterEncodingFilter filter = new OrderedCharacterEncodingFilter();
+     		filter.setEncoding(this.properties.getCharset().name());
+     		filter.setForceRequestEncoding(this.properties.shouldForce(Type.REQUEST));
+     		filter.setForceResponseEncoding(this.properties.shouldForce(Type.RESPONSE));
+     		return filter;
+     	}
+
+     	@Bean
+     	public LocaleCharsetMappingsCustomizer localeCharsetMappingsCustomizer() {
+     		return new LocaleCharsetMappingsCustomizer(this.properties);
+     	}
+
+     	private static class LocaleCharsetMappingsCustomizer
+     			implements EmbeddedServletContainerCustomizer, Ordered {
+
+     		private final HttpEncodingProperties properties;
+
+     		LocaleCharsetMappingsCustomizer(HttpEncodingProperties properties) {
+     			this.properties = properties;
+     		}
+
+     		@Override
+     		public void customize(ConfigurableEmbeddedServletContainer container) {
+     			if (this.properties.getMapping() != null) {
+     				container.setLocaleCharsetMappings(this.properties.getMapping());
+     			}
+     		}
+
+     		@Override
+     		public int getOrder() {
+     			return 0;
+     		}
+     	}
+     }
+
+
+自动配置类对应的配置类对应如下：
+@ConfigurationProperties(prefix = "spring.http.encoding")
+public class HttpEncodingProperties {...}
+
+总结：
+   1）SpringBoot 启动会加载大量的自动配置类
+   2）我们看我们需要的功能有没有SpringBoot默认写好的自动配置类
+   3）我们在来看这个自动配置类中到底有哪些配置
+   4）给容器中自动配置类添加组件的时候，会从properties类中获取某个属性，我们就可以在配置文件中指定这些属性的值。
+
+   XxxAutoConfiguration 就是自动配置类，这些配置类会向容器中注入特定功能的Bean
+   XxxProperties 封装配置文件中相关的属性。
+
+   一句话：我需要的功能，看看SpringBoot是否帮我们使用自动配置类配置了，如果没有则自己配置。如果发现配置的某些属性需要修改，则去
+         查看对应自动配置类的XxxProperties具有哪些配置属性，然后在配置文件中设置新值。

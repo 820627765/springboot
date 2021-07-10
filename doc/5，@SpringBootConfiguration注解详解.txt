@@ -1,0 +1,9 @@
+1,@SpringBootConfiguration 是SpringBoot的配置类
+  该注解标注到某个类上，说明该类是SpringBoot的一个配置类。
+  该注解是 springBoot 当以的。
+
+2，@SpringBootConfiguration 注解的定义
+@Configuration  //这个是 spring 框架的配置类注解
+public @interface SpringBootConfiguration {
+
+}

@@ -1,0 +1,59 @@
+1,springboot 使用一个全局的配置文件，配置文件名是固定的：
+  - application.properties
+  - application.yml
+
+  yaml配置文件以数据为中心，比json、xml更适合做配置文件
+
+2,配置文件的作用：修改springboot自动配置的默认值；
+
+3,项目中导入该依赖，效果是 ”配置文件“的配置内容 和 ”配置类“会有自动提示的效果。叫做”配置文件处理器“
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-configuration-processor</artifactId>
+</dependency>
+
+4，配置文件默认值
+   person.age=${age:22}  //表示配置文件中如果没有 age的配置，就默认取 22 。冒号默认值
+
+
+5，配置文件还可以使用随机数
+   person.name=zs${random.uuid}
+
+6，springboot配置文件的加载位置？
+   springboot启动会扫描以下位置的 application.properties 和 application.yml 作为springboot的默认配置文件
+   - ./config/   当前项目的 config 文件夹下。即项目目录的config目录下
+   - ./          当前项目文件夹下。
+   - classpath:/config/ 类路径下的config目录下
+   - classpath:/        类路径下
+
+   以上路径的配置文件，优先级从高到底，即类路径下的配置文件优先级最低。
+   所有位置的文件都会被加载，高优先级配置内容会覆盖低优先级的配置内容。
+
+7，项目打包，启动的时候，通过命令行参数指定配置文件位置：
+我们可以通过命令行参数的形式来指定配置文件的位置，启动项目的时候指定的配置文件和默认的配置文件都会被加载。
+java -jar xxx.jar --spring.config.location=/application.yml
+这种方式优先级最高。因此在运维的时候，不想修改原配置，为了修改部分配置，就可以通过这种方式。
+
+
+8，springboot 外部配置及加载顺序，优先级从高到底，高优先级会覆盖低优先级
+   - 命令行参数
+     如：java -jar xx.jar --server.port=8087       优先级最高
+        写法就是 --配置key=配置值
+   - java系统属性(System.getProperties())
+   - 操作系统环境变量
+
+   //由jar包外向jar包内进行加载，这里的jar包指的是springboot应用打成的jar包
+   // java -jar xxx.jar --server.context-
+   //优先加载带profile 的
+   - jar包外部的 application-{profile}.properties 或 application.yml(带spring.profile)配置文件
+     需要将配置文件放在和springboot应用打成的jar包在同一层目录。这样使用java -jar命令执行时会自动去加载这些配置文件。
+   - jar包内部的 application-{profile}.properties 或 application.yml(带spring.profile)配置文件
+
+   //再来加载不带profile 的
+   - jar包外部的 application.properties 或 application.yml(不带spring.profile)配置文件
+   - jar包内部的 application.properties 或 application.yml(不带spring.profile)配置文件
+
+   - @Configuration 注解类上的 @PropertySource
+   - 通过SpringApplication.setDefaultProperties 指定的默认属性
+
+   除了以上几种配置加载方式，还有其他，参考官方文档。

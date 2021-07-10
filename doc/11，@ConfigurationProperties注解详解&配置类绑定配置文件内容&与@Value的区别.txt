@@ -1,0 +1,84 @@
+1,@ConfigurationProperties(prefix="")注解用于告诉SpringBoot将本类中的所有属性和配置文件中的相关配置进行绑定
+  prefix 属性用于指定”配置文件中那个下面的所有属性本类的属性进行一一映射“。
+  需要注意的是：只有这个配置Bean将会是容器的组件，@ConfigurationProperties(prefix="") 才会生效，
+  所以一般会配合 @Component 等注解一起使用。
+
+如：
+application.yml 内容如下：
+person:
+ lastName: zs
+ age: 18
+ boss: false
+ birth: 1995-08-18
+ maps: {k1: v1,k2: v2}
+ lists:
+    - lisi
+    - wangwu
+ dog:
+    name: 小狗
+    age: 2
+
+对应 application.properties 的配置可以是如下：
+person.lastName=zs
+person.birth=1995-08-18
+person.age=18
+# Map类型的配置
+person.maps.k1=v1
+person.maps.k2=v2
+# list类型的配置
+person.lists=a,b,c
+# 对象的配置
+person.dog.name=小狗
+person.dog.age=15
+
+
+@Component  //是容器的组件
+@ConfigurationProperties(prefix="person")
+public class Person{
+    private String lastName;
+    private Integer age;
+    private Boolean boss;
+    private Date birth;
+
+    private Map<String,Object> maps;
+    private List<Object> lists;
+    private Dog dog;
+
+    //getter setter
+}
+
+
+2，如果使用 @Value 绑定配置也是可以的，如下
+@Component  //是容器的组件
+// @ConfigurationProperties(prefix="person") 使用@Value 就不需要这个了
+public class Person{
+    @Value("${person.lastName}")
+    private String lastName;
+    @Value("${person.age}")
+    private Integer age;
+
+    @Value("${person.maps}")  //@Value 不支持复杂类型，Map类型就不支持
+    private Map<String,Object> maps;
+    ......
+
+    //getter setter
+}
+
+3，@Value 与 @ConfigurationProperties 获取值的比较
+- @Value 只能单个属性配置，@ConfigurationProperties 可以批量进行属性绑定。
+- @Value 不支持松散绑定，@ConfigurationProperties 支持松散绑定
+- @Value 支持spEl，@ConfigurationProperties 不支持spEl
+- @Value 不支持复杂类型绑定，@ConfigurationProperties 能支持复杂类型绑定
+- @ConfigurationProperties 支持jsr303 的数据校验，而 @Value 不支持
+  如：
+     @Component
+     @Validated  //表示需要校验，对于 @Value 属性注入，jsr303的验证注解没有作用。
+                 //而@ConfigurationProperties 属性绑定时，是会校验的。
+     public class Person{
+        @Email   //必须是Email
+        @Value("${email}")  //这种方式不会jsr303校验
+        private String email;
+     }
+
+
+
