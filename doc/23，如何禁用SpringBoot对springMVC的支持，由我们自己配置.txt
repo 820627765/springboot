@@ -1,0 +1,13 @@
+1，如何禁用SpringBoot对SpringMVC的自动配置
+    只需要在我们的配置类中，增加一个注解 @EnableWebMvc 。如
+
+    @EnableWebMvc   //加上该注解后，SpringBoot为SpringMVC提供的自动配置功能全部失效。
+    @Configuration
+    public class MyConfig{...}
+
+    如果禁用后，想要使用springMVC的功能就需要自己一个个配置了。
+
+2，为什么加上@EnableWebMvc后，就禁用了对SpringMVC的自动配置呢？
+   因为在WebMvcAutoConfiguration自动配置类上有一个条件 @ConditionalOnMissingBean(WebMvcConfigurationSupport.class)
+   表示容器中没有 WebMvcConfigurationSupport 组件时，WebMvcAutoConfiguration才生效，而查看@EnableWebMvc可知，它会向容器
+   中导入一个WebMvcConfigurationSupport组件，该组件是SpringMVC最基本的功能。

@@ -1,0 +1,77 @@
+1，新建项目 spring-boot-web-restfulcrud
+2，修改pom.xml，引入web场景启动器和springboot父项目.
+   本来学习案例的版本是1.5.9.RELEASE，但是新建项目时选择了2.5.2 这个版本，就用新版本了。
+3，先写一个HelloWordController 是否能正常访问
+4，在项目中放入前端静态资源
+   4.1 先了解以下SpringBoot对静态资源的映射规则？
+       - 在springboot项目中，关于SpringMVC的相关配置都在 WebMvcAutoConfiguration.java 自动配置类中
+         在该配置类中有一个 addResourceHandlers 方法，该方法的作用是指明“静态资源的请求如何映射”，如下是删减后的代码逻辑：
+         public void addResourceHandlers(ResourceHandlerRegistry registry) {
+            //先判断是否已经注册过 /webjars/** 的映射规则
+            if (!registry.hasMappingForPattern("/webjars/**")) {
+                customizeResourceHandlerRegistration(
+                        // 这是默认的映射规则
+                        // 表示所有的 /webjars/** 的请求，都去类路径下的 /META-INF/resources/webjars/ 下找资源
+                        registry.addResourceHandler("/webjars/**")
+                                .addResourceLocations(
+                                        "classpath:/META-INF/resources/webjars/")
+                        .setCachePeriod(cachePeriod)); // 这里还设置了静态资源的缓存时间...,以后自己写可以参考这个如何给静态资源设置缓存时间的
+            }
+            String staticPathPattern = this.mvcProperties.getStaticPathPattern();
+            if (!registry.hasMappingForPattern(staticPathPattern)) {
+                customizeResourceHandlerRegistration(
+                        //staticPathPattern 的值其实是 /** ,表示如果请求是 /** 的请求，当没有处理器能处理时，
+                        //会去 this.resourceProperties.getStaticLocations()返回值的路径下找资源，
+                        //该返回值是 "classpath:/META-INF/resources/", "classpath:/resources/","classpath:/static/", "classpath:/public/"
+                        registry.addResourceHandler(staticPathPattern)
+                                .addResourceLocations(
+                                        this.resourceProperties.getStaticLocations())
+                        .setCachePeriod(cachePeriod));
+            }
+         }
+       - 结论
+         1.表示所有的 /webjars/** 的请求，都去类路径下的 /META-INF/resources/webjars/ 下找资源。
+           如：http://localhost:8080/webjars/jquery/3.3.1/jquery.js 请求，
+              将会去找"类路径下的 /META-INF/resources/webjars/jquery/3.3.1/jquery.js 这个资源，如果没有自然就是 404，有就返回
+         2.webjars是什么？https://www.webjars.org/
+           简单理解就是以 jar 包的方式引入静态资源。以前我们是将 jquery.js 放入webapp 目录中即可，但是现在“可以将如jquery、bootstrap
+           等前端资源以 maven依赖的形式给我们，下载下来是各jar包，所以称之为 webjars”，如jquery的maven依赖如下：
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>jquery</artifactId>
+                <version>3.6.0</version>
+            </dependency>
+           其他的前端资源的webjars查看可以查看这个网站：https://www.webjars.org/
+           解压jquery的jar包，可以看出来结构如 img/jquery-webjars-directory.png 所示，资源是放在jar包的 /META-INFO/resources/webjars 目录下的
+
+         3，通过看源码，可知道关于“静态资源的配置类是 ResourceProperties"，可参看这个类来设置静态资源相关的参数，如缓存时间。
+
+         4，/** 的请求，表示访问项目的任何资源，将会去以下目录寻找资源
+            - "classpath:/META-INF/resources/", 类路径下的/META-INF/resources/目录
+            - "classpath:/resources/",  类路径下的 /resources/目录
+            - "classpath:/static/",  类路径下的 /static/目录
+            - "classpath:/public/"   类路径下的 /public/目录
+            - "/"         当前项目的根路径
+            以上的目录，就称为 “静态资源的文件夹”。“只有我们的请求没有其他处理器处理”，就会来这些目录找资源。
+            注意：项目自带的 resources 是类路径的根目录，所以如果要是 classpath:/resources/ 则需要在项目自带的
+                 resources目录下，再新增一个 resources 目录。
+
+   4.2 根据4.1 的知识，将我们需要的静态资源放入项目的静态资源目录中
+       本案例我们将 asserts{css、js、img} 都放入 classpath:/static/ 目录下。
+       然后自测以下： http://localhost:8080/asserts/js/Chart.min.js
+
+   4.3 看源码可知，WelcomePageHandlerMapping welcomePageHandlerMapping(){...} 方法是设置欢迎页的映射的，
+       可知，4.1中的静态资源文件夹中的所有 index.html页面，就是欢迎页。
+       即：/** 的任意请求，如果没有处理的，就会默认去找静态资源文件夹下的 index.html 。如果没有静态资源匹配，也没有index.html
+          就会返回 404 哦。
+          因此：我们可以在静态资源目录下 加一个 index.html 作为默认响应的欢迎页。
+
+   4.4 看源码可知，SimpleUrlHandlerMapping faviconHandlerMapping(){...} 这个方法的作用是，设置一个
+       喜爱的图标的映射，即 **/favicon.ico 的请求，都在静态资源文件夹下找。
+       因此，我们可以把我们爱好的“图标 favicon.ico” 放在静态资源文件夹下就行。
+
+   4.5 从上面的4.1 ~ 4.4 可知 WebMvcAutoConfiguration 自动配置类给我们配置了很多东西，比如静态资源文件夹，
+       如果我们想要修改默认的静态资源文件夹，可以通过  spring.resources.static-locations = classpath:/hello/,classpath:/xx 来进行修改。
+       一旦修改后，默认的静态资源文件夹就不生效了。
+
+

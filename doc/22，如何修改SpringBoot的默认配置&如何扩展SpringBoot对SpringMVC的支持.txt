@@ -1,0 +1,33 @@
+模式：
+1,SpringBoot在自动配置很多组件的时候，都会先看容器中有没有用户自己配置的组件，如果有就用用户自己配置的，
+  如果没有，才自动配置；
+  如果有些组件可以允许有多个，则将用户配置的和自己默认的组合起来；
+
+2，如果想保持SpringBoot对SpringMVC的自动配置，且自己又想做一些扩展，如增加”拦截器“、”格式化器“、”view Controller“等
+   就可以编写一个配置类（@Configuration）继承WebMvcConfigurerAdapter，该类是个抽象类，里面定义了很多扩展组件的方法，
+   我们只需要实现需要扩展组件的方法即可。注意不能标注@EnableWebMvc，如：
+
+   @Configuration
+   public class MyConfig extends WebMvcConfigurerAdapter{
+
+        //这个就是用于添加”视图映射控制器“的方法
+        @Override
+        public void addViewControllers(ViewControllerRegistry registry){
+            //浏览器发送 /ok 请求，则响应 success 页面的视图映射
+            registry.addViewController("/ok").setViewName("success");
+        }
+   }
+
+   解释：通过继承 WebMvcConfigAdapter 的方式向容器中注册需要扩展的组件能够生效的原理在于一个很关键的注解：
+   @Import(EnableWebMvcConfiguration.class)，其中 EnableWebMvcConfiguration 类，这个类有一个很重要的方法
+   @Autowired(required = false)
+   	public void setConfigurers(List<WebMvcConfigurer> configurers) { //从容器中拿到所有的 WebMvcConfigure
+   		if (!CollectionUtils.isEmpty(configurers)) {
+   		    //然后让容器中所有的 WebMvcConfigure 一起其作用，这个慢慢理解......
+   			this.configurers.addWebMvcConfigurers(configurers);
+   		}
+   	}
+   	因为 WebMvcConfigurerAdapter 也是 WebMvcConfigure的子类。
+   	因此，在SpringMVC中会有很多的 XxxConfigurer 帮我们做扩展配置。
+
+

@@ -1,0 +1,14 @@
+1,springboot 自动配置好了SpringMVC，其自动配置类之一就是 WebMvcAutoConfiguration
+  了解了WebMvcAutoConfiguration自动配置原理，我们就能进行一些扩展，比如增加自己的一些格式化器等.....，
+  详细可以配置哪些组件可以看springMVC的知识，然后接合springBoot对SpringMVC的自动配置来进行扩展。
+
+  关于springBoot对SpringMVC的配置支持，可以参考 org.springframework.boot.autoconfigure.web 目录下的自动配置类。
+
+2，以下是SpringBoot对SpringMVC的默认配置：
+   - 配置了视图解析器（ViewResolver)，如 BeanNameViewResolver、ContentNegotiatingViewResolver
+   - 静态资源文件路径映射 和 webjars 映射
+   - 静态首页映射
+   - favicon.ico 映射
+   - 自动注册了 Converter、Formatter、HttpMessageConverter 等
+   - 定义错误代码解析器 MessageCodesResolver
+   - ConfigurableWebBindingInitializer 组件，用于初始化web数据绑定

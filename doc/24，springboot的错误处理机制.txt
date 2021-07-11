@@ -1,0 +1,148 @@
+1,SpringBoot默认的错误处理机制
+1）当”浏览器“访问一个不存在的资源时，springboot默认会返回一个 Error Page，这个错误页会显示
+错误类型 type和状态码status，如 type=Not Found,status=404 等信息
+如：
+    Whitelabel Error Page
+    This application has no explicit mapping for /error, so you are seeing this as a fallback.
+
+    Sun Jul 11 19:02:27 CST 2021
+    There was an unexpected error (type=Not Found, status=404).
+
+2）当是其他”客户端“访问一个不存在的资源时，默认响应一个JSON数据
+   如：
+   {
+    "timestamp":11223424,
+    "status":404,
+    "error":"Not Found",
+    "message":"Not Message available",
+    "path":"/abc"
+   }
+
+所以，springboot 默认是能够识别请求的的客户端是”浏览器“还是其他客户端，从而来响应不同的信息。
+这个错误处理机制是通过 ErrorMvcAutoConfiguration 自动配置类来设置的，该自动配置类给容器中添加了如下组件：
+
+@Bean
+@ConditionalOnMissingBean(value = ErrorAttributes.class, search = SearchStrategy.CURRENT)
+public DefaultErrorAttributes errorAttributes() {
+    return new DefaultErrorAttributes();
+}
+//该对象用户存放错误信息，在错误页面可以获取到该对象绑定的错误信息
+
+@Bean
+@ConditionalOnMissingBean(value = ErrorController.class, search = SearchStrategy.CURRENT)
+public BasicErrorController basicErrorController(ErrorAttributes errorAttributes) {
+    return new BasicErrorController(errorAttributes, this.serverProperties.getError(),
+            this.errorViewResolvers);
+}
+BasicErrorController 就是一个Controller，它的注解是 @RequestMapping("${server.error.path:${error.path:/error}}") 即，默认是处理 /error 请求
+
+@Bean
+public ErrorPageCustomizer errorPageCustomizer() {
+    return new ErrorPageCustomizer(this.serverProperties);
+}
+该组件的作用是，系统出现错误以后来到 @Value("${error.path:/error}") private String path = "/error"; 这个属性指定的请求处理。就相当于web.xml中配置的那个异常去那个页面处理。
+
+@Bean
+@ConditionalOnBean(DispatcherServlet.class)
+@ConditionalOnMissingBean
+public DefaultErrorViewResolver conventionErrorViewResolver() {
+    return new DefaultErrorViewResolver(this.applicationContext,
+            this.resourceProperties);
+}
+去那个页面是由 DefaultErrorViewResolver 解析得到的。默认springboot可以去找一个页面 error/错误状态码，如 error/404
+** 这个详细细节需要 理解视图解析器的原理 以及 查看DefaultErrorViewResolver的源码可知。
+
+步骤：
+一旦系统出现4xx 或 5xx之类的错误，ErrorPageCustomizer就会生效，然后就会来到/error 请求，被BasicErrorController处理，在该控制器中提供了处理两种处理逻辑
+@RequestMapping(produces = "text/html")  //表示生成 html类型的数据，produces 属性的作用是指定”返回值类型“，当请求头 Accept的值带有 text/html 时就会进入该方法
+public ModelAndView errorHtml(HttpServletRequest request,HttpServletResponse response) {
+    HttpStatus status = getStatus(request);
+    Map<String, Object> model = Collections.unmodifiableMap(getErrorAttributes(request, isIncludeStackTrace(request, MediaType.TEXT_HTML)));
+    response.setStatus(status.value());
+    ModelAndView modelAndView = resolveErrorView(request, response, status, model);
+    return (modelAndView == null ? new ModelAndView("error", model) : modelAndView);
+}
+
+@RequestMapping
+@ResponseBody   //表示产生JSON类型的数据，当请求头的 Accept的值没有 text/html 时，就会进入该方法
+public ResponseEntity<Map<String, Object>> error(HttpServletRequest request) {
+    Map<String, Object> body = getErrorAttributes(request,isIncludeStackTrace(request, MediaType.ALL));
+    HttpStatus status = getStatus(request);
+    return new ResponseEntity<Map<String, Object>>(body, status);
+}
+
+
+
+总结一下：
+* 根据上面讲到的错误处理机制原理，如何定制”错误页面“呢？
+1）有模板引擎的情况下，
+   我们可以在模板引擎默认的模板文件夹下新建错误目录 error,并新建对应错误码的模板文件，如 404.html、500.html
+   例如使用的模板引擎时 thymeleaf ，则 错误目录及错误页模板是 classpath:/template/error/404.html
+   当发生此状态码的错误时就会来到该页面。
+   - 问题是4开头的错误码有很多，根据 DefaultErrorViewResolver 的原理，可知我们可以新建通用错误模板，如 4xx.html 处理所有以4开头的错误码，5xx.html 处理所有5开头的错误码
+     不过要注意优先按“精确匹配”进行匹配错误页面。
+   然后我们就可以在错误页面上，通过模板语法来显示错误信息。
+
+2）没有模板引擎的情况（或模板引擎找不到错误页面时），
+   DefaultErrorViewResolver 会在“静态资源文件夹”下找错误码对应的错误文件，如 404.html、500.html
+
+如果以上1和2都找不到错误定制页面，则会进入默认的 error视图。看源码都能看得出来。
+
+* 根据上面讲到的错误处理机制原理，如何定制”错误JSON数据“呢？
+默认情况下，springboot 会提供默认的异常json数据，如上面2）所展示的。如果我们要自定义，该如何做呢？
+我们可以自定义一个异常处理器来处理想要处理的异常 或 所以异常，如下：
+
+@ControllerAdvice
+public class MyExceptionHandler{
+
+    //需要注意：这样写，当业务逻辑出现指定的异常时，浏览器和客户端都将返回的是这一段json数据，失去了自适应效果（浏览器显示错误页，客户端显示json数据）
+    @ResponseBody
+    @ExceptionHandler(UserNotExistsException.class)  //指定该方法将处理什么类型的异常
+    public String handleException(Exception e){
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put("code","user.notExist");
+        map.put("message",e.getMessage());
+
+        return map;
+    }
+
+    //改进版，这时就有了自适应效果，但是
+    @ExceptionHandler(UserNotExistsException.class)  //指定该方法将处理什么类型的异常
+    public String handleException(Exception e,HttpServletRequest request){
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put("code","user.notExist");
+        map.put("message",e.getMessage());
+
+        //将异常信息放到请求域中
+        request.setAttribute("ext",map);
+        //给请求设置一个状态码,以便/error 能知道是什么状态码的错误
+        request.setAttribute("javax.servlet.error.status_code",500);
+
+        //转发到 /error请求
+        return "forward:/error";
+    }
+}
+
+//自定义一个 ErrorAttribute
+@Component
+public class MyErrorAttribute extends DefaultErrorAttributes{
+    //返回的这个Map就是页面 和 json能获取到的字段
+    public Map<String,Object> getErrorAttributes(RequestAttributes requestAttributes,boolean includeStackTrace){
+        Map<String,Object> map = super.getErrorAttributes(requestAttributes,includeStackTrace);
+        //增加自定义的错误属性
+        map.put("errorCode","000");
+
+        Map<String,Object> ext = RequestAttributes.getAttribute("ext",0); //0表示从请求域中获取到key绑定的值，这就是在异常处理器中绑定到业务方法的异常信息
+        map.put("ext",ext);
+        return map;
+    }
+}
+
+注意：以上的逻辑如果想彻底搞明白，需要看源码。
+
+
+
+
+
+
+

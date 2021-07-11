@@ -1,7 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d545e37f-9efa-4c9f-8bb8-60c11dec3bda" name="Default Changelist" comment="" />
+    <list default="true" id="d545e37f-9efa-4c9f-8bb8-60c11dec3bda" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/doc/18，@Conditional注解详解&amp;Spring对@Conditional的扩展注解.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/doc/19，SpringBoot的Web开发-之静态资源映射&amp;WebMvcAutoConfiguration.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/doc/20，SpringBoot的Web开发-之模板引擎之Thymeleaf.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/doc/21，SpringBoot对SpringMVC的自动配置原理.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/doc/22，如何修改SpringBoot的默认配置&amp;如何扩展SpringBoot对SpringMVC的支持.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/doc/23，如何禁用SpringBoot对springMVC的支持，由我们自己配置.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/doc/24，springboot的错误处理机制.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/doc/img/jquery-webjars-directory.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring-boot-web-restfulcrud/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring-boot-web-restfulcrud/src/main/java/com/example/springbootwebrestfulcrud/HelloWordController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring-boot-web-restfulcrud/src/main/java/com/example/springbootwebrestfulcrud/SpringBootWebRestfulcrudApplication.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring-boot-web-restfulcrud/src/main/resources/application.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring-boot-web-restfulcrud/src/main/resources/static/asserts/css/bootstrap.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring-boot-web-restfulcrud/src/main/resources/static/asserts/css/dashboard.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring-boot-web-restfulcrud/src/main/resources/static/asserts/css/signin.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring-boot-web-restfulcrud/src/main/resources/static/asserts/img/bootstrap-solid.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring-boot-web-restfulcrud/src/main/resources/static/asserts/js/Chart.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring-boot-web-restfulcrud/src/main/resources/static/asserts/js/bootstrap.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring-boot-web-restfulcrud/src/main/resources/static/asserts/js/feather.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring-boot-web-restfulcrud/src/main/resources/static/asserts/js/jquery-3.2.1.slim.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring-boot-web-restfulcrud/src/main/resources/static/asserts/js/popper.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spring-boot-web-restfulcrud/src/test/java/com/example/springbootwebrestfulcrud/SpringBootWebRestfulcrudApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/16，springboot自动配置原理.txt" beforeDir="false" afterPath="$PROJECT_DIR$/doc/16，springboot自动配置原理&amp;打印自动配置报告.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/17，@EnableConfigurationProperties注解详解.txt" beforeDir="false" afterPath="$PROJECT_DIR$/doc/17，@EnableConfigurationProperties注解详解.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/springboot-helloword/src/main/resources/beans.xml" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -10,8 +36,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="spring-beans.schema" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -28,20 +54,45 @@
     </option>
   </component>
   <component name="ProjectId" id="1uwiBcq8jsKlMraiRiauOE8KMts" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showExcludedFiles" value="false" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RequestMappingsPanelOrder0" value="0" />
+    <property name="RequestMappingsPanelOrder1" value="1" />
+    <property name="RequestMappingsPanelOrder2" value="2" />
+    <property name="RequestMappingsPanelWidth0" value="75" />
+    <property name="RequestMappingsPanelWidth1" value="75" />
+    <property name="RequestMappingsPanelWidth2" value="75" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/spring-boot-web-restfulcrud/src/main/resources/static" />
     <property name="settings.editor.selected.configurable" value="preferences.general" />
   </component>
-  <component name="RunManager">
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\IdeaProjects\springboot\spring-boot-web-restfulcrud\src\main\resources\static" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\IdeaProjects\springboot\doc\img" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="SpringBootApplicationConfigurationType" />
+      </set>
+    </option>
+  </component>
+  <component name="RunManager" selected="Spring Boot.SpringBootWebRestfulcrudApplication">
     <configuration name="MainApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
       <module name="springboot-helloword" />
       <extension name="coverage">
@@ -51,6 +102,13 @@
         </pattern>
       </extension>
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.MainApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SpringBootWebRestfulcrudApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="spring-boot-web-restfulcrud" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.springbootwebrestfulcrud.SpringBootWebRestfulcrudApplication" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -72,61 +130,94 @@
       <option name="presentableId" value="Default" />
       <updated>1625582917047</updated>
       <workItem from="1625582920812" duration="2624000" />
-      <workItem from="1625879877713" duration="27950000" />
+      <workItem from="1625879877713" duration="28753000" />
+      <workItem from="1625972805214" duration="21493000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="2" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
   <component name="WindowStateProjectService">
-    <state x="292" y="141" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1625893399660">
+    <state x="292" y="141" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1625988028046">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="292" y="141" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1625893399660" />
+    <state x="292" y="141" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1625988028046" />
     <state x="446" y="46" key="#com.intellij.ide.util.MemberChooser" timestamp="1625903191083">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="446" y="46" key="#com.intellij.ide.util.MemberChooser/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1625903191083" />
-    <state width="1237" height="274" key="GridCell.Tab.0.bottom" timestamp="1625923952768">
+    <state width="1511" height="310" key="GridCell.Tab.0.bottom" timestamp="1626001332863">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="987" height="383" key="GridCell.Tab.0.bottom/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1626001211236" />
+    <state width="1511" height="310" key="GridCell.Tab.0.bottom/0.0.1280.680/1920.0.1920.1040@1920.0.1920.1040" timestamp="1626001332863" />
+    <state width="1511" height="310" key="GridCell.Tab.0.center" timestamp="1626001332862">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="987" height="383" key="GridCell.Tab.0.center/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1626001211236" />
+    <state width="1511" height="310" key="GridCell.Tab.0.center/0.0.1280.680/1920.0.1920.1040@1920.0.1920.1040" timestamp="1626001332862" />
+    <state width="1511" height="310" key="GridCell.Tab.0.left" timestamp="1626001332862">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="987" height="383" key="GridCell.Tab.0.left/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1626001211235" />
+    <state width="1511" height="310" key="GridCell.Tab.0.left/0.0.1280.680/1920.0.1920.1040@1920.0.1920.1040" timestamp="1626001332862" />
+    <state width="1511" height="310" key="GridCell.Tab.0.right" timestamp="1626001332862">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="987" height="383" key="GridCell.Tab.0.right/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1626001211236" />
+    <state width="1511" height="310" key="GridCell.Tab.0.right/0.0.1280.680/1920.0.1920.1040@1920.0.1920.1040" timestamp="1626001332862" />
+    <state width="1511" height="310" key="GridCell.Tab.1.bottom" timestamp="1626001332863">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="987" height="383" key="GridCell.Tab.1.bottom/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1626001211236" />
+    <state width="1511" height="310" key="GridCell.Tab.1.bottom/0.0.1280.680/1920.0.1920.1040@1920.0.1920.1040" timestamp="1626001332863" />
+    <state width="1511" height="310" key="GridCell.Tab.1.center" timestamp="1626001332863">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="987" height="383" key="GridCell.Tab.1.center/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1626001211236" />
+    <state width="1511" height="310" key="GridCell.Tab.1.center/0.0.1280.680/1920.0.1920.1040@1920.0.1920.1040" timestamp="1626001332863" />
+    <state width="1511" height="310" key="GridCell.Tab.1.left" timestamp="1626001332863">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="987" height="383" key="GridCell.Tab.1.left/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1626001211236" />
+    <state width="1511" height="310" key="GridCell.Tab.1.left/0.0.1280.680/1920.0.1920.1040@1920.0.1920.1040" timestamp="1626001332863" />
+    <state width="1511" height="310" key="GridCell.Tab.1.right" timestamp="1626001332863">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="987" height="383" key="GridCell.Tab.1.right/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1626001211236" />
+    <state width="1511" height="310" key="GridCell.Tab.1.right/0.0.1280.680/1920.0.1920.1040@1920.0.1920.1040" timestamp="1626001332863" />
+    <state width="1511" height="310" key="GridCell.Tab.2.bottom" timestamp="1626001332864">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="987" height="32" key="GridCell.Tab.2.bottom/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1626001206678" />
+    <state width="1511" height="310" key="GridCell.Tab.2.bottom/0.0.1280.680/1920.0.1920.1040@1920.0.1920.1040" timestamp="1626001332864" />
+    <state width="1511" height="310" key="GridCell.Tab.2.center" timestamp="1626001332864">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="987" height="32" key="GridCell.Tab.2.center/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1626001206678" />
+    <state width="1511" height="310" key="GridCell.Tab.2.center/0.0.1280.680/1920.0.1920.1040@1920.0.1920.1040" timestamp="1626001332864" />
+    <state width="1511" height="310" key="GridCell.Tab.2.left" timestamp="1626001332864">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="987" height="32" key="GridCell.Tab.2.left/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1626001206678" />
+    <state width="1511" height="310" key="GridCell.Tab.2.left/0.0.1280.680/1920.0.1920.1040@1920.0.1920.1040" timestamp="1626001332864" />
+    <state width="1511" height="310" key="GridCell.Tab.2.right" timestamp="1626001332864">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="987" height="32" key="GridCell.Tab.2.right/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1626001206678" />
+    <state width="1511" height="310" key="GridCell.Tab.2.right/0.0.1280.680/1920.0.1920.1040@1920.0.1920.1040" timestamp="1626001332864" />
+    <state x="28" y="1" key="new project wizard" timestamp="1625983514170">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="274" key="GridCell.Tab.0.bottom/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1625923952768" />
-    <state width="1237" height="274" key="GridCell.Tab.0.center" timestamp="1625923952768">
-      <screen x="0" y="0" width="1280" height="680" />
+    <state x="28" y="1" key="new project wizard/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1625983514170" />
+    <state x="2375" y="2" width="1008" height="1037" key="search.everywhere.popup" timestamp="1626001718721">
+      <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="1237" height="274" key="GridCell.Tab.0.center/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1625923952768" />
-    <state width="1237" height="274" key="GridCell.Tab.0.left" timestamp="1625923952768">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state width="1237" height="274" key="GridCell.Tab.0.left/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1625923952768" />
-    <state width="1237" height="274" key="GridCell.Tab.0.right" timestamp="1625923952768">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state width="1237" height="274" key="GridCell.Tab.0.right/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1625923952768" />
-    <state width="1237" height="274" key="GridCell.Tab.1.bottom" timestamp="1625923952768">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state width="1237" height="274" key="GridCell.Tab.1.bottom/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1625923952768" />
-    <state width="1237" height="274" key="GridCell.Tab.1.center" timestamp="1625923952768">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state width="1237" height="274" key="GridCell.Tab.1.center/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1625923952768" />
-    <state width="1237" height="274" key="GridCell.Tab.1.left" timestamp="1625923952768">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state width="1237" height="274" key="GridCell.Tab.1.left/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1625923952768" />
-    <state width="1237" height="274" key="GridCell.Tab.1.right" timestamp="1625923952768">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state width="1237" height="274" key="GridCell.Tab.1.right/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1625923952768" />
-    <state x="28" y="1" key="new project wizard" timestamp="1625880500721">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state x="28" y="1" key="new project wizard/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1625880500721" />
-    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup" timestamp="1625921679370">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1625921679370" />
+    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup/0.0.1280.680/1920.0.1920.1040@0.0.1280.680" timestamp="1626001063762" />
+    <state x="2375" y="2" width="1008" height="1037" key="search.everywhere.popup/0.0.1280.680/1920.0.1920.1040@1920.0.1920.1040" timestamp="1626001718721" />
   </component>
 </project>

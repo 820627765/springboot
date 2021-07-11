@@ -1,4 +1,5 @@
 @EnableConfigurationProperties(HttpEncodingProperties.class)
 - @EnableConfigurationProperties 注解的作用表示启用指定类配置的 @ConfigurationProperties 功能
 （即让指定类的 @ConfigurationProperties 注解生效，很多第三方的配置类，并没有纳入spring容器，
-所以需要使用@EnableConfigurationProperties 注解来指定其生效，生效后配置文件的内容就和指定的类属性绑定在一起了），并且指定的类也会被加入到容器中。
+所以需要使用@EnableConfigurationProperties 注解来指定其生效，生效后配置文件的内容就和指定的类属性绑定在一起了），
+并且指定的类也会被加入到容器中。

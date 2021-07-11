@@ -1,0 +1,54 @@
+1,@Conditional 注解是spring底层提供的注解，并且大量使用。它的作用是“按照一定的条件进行判断，满足条件就
+  给容器中注册bean”。如原来我们给配置类的方法加上@Bean 注解，则该方法的返回值就会向容器注入Bean对象。但是
+  如果加上@Conditional 注解，则只有当该注解满足条件时该方法才会生效。
+
+2，@Conditional 使用方法
+  该注解可以作用于类上和方法上，作用于类上表示满足条件时整个类才生效。作用于方法上表示满足条件时方法才生效。
+  该注解需要传入一个Condition接口的实现类，用于作为判断条件逻辑。当然也支持传入实现类数组，表示都满足时才生效。
+
+   @Bean
+   @Conditional({MyCondition.class})
+   public Person person(){
+        return new Person();
+   }
+
+   //自定义的条件类
+   public class MyCondition implements Condition{
+       public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata){
+           //在这里些条件判断逻辑，ConditionContext 参数是判断条件能使用的上下文，可以通过这个对象获取很多信息用于判断。如容器中是否包含某个Bean来作为判断逻辑
+           // AnnotatedTypeMetadata 是标注了@Conditional注解
+           //的注解元数据信息。
+           ConfigurableListableBeanFactory factory = context.getBeanFactory(); //获取到ioc使用的beanFactory
+           Environment env = context.getEnvironment();//获取当前环境信息
+           BeanDefinitionRegistry registry = context.getRegistry(); //获取到Bean定义注册器
+
+           //通过环境信息，判断如果是windows，则生效
+           if(env.getProperty("os.name").contains("windows")){
+               return true; //返回true，表示生效
+           }
+           return false; //返回false 表示不生效
+       }
+   }
+
+2，为了方便，Spring为我们扩展了@Conditional，提供了很多其他判断注解，如下：
+   - @ConditionalOnMissingBean(组件类.class)  表示容器中如果没有指定的组件Bean，则生效，否则不生效。该注解定义如下：
+     @Conditional(OnBeanCondition.class)  //其实还是使用的是 @Conditional 注解，条件实现类是 OnBeanCondition
+     public @interface ConditionalOnMissingBean {......}
+
+   - @ConditionalOnJava      系统的java版本是否符合要求
+   - @ConditionalOnBean      容器中存在指定的Bean才生效
+   - @ConditionalOnMissingBean 容器中不存在指定Bean才生效
+   - @ConditionalOnExpression  满足SpEL表达式才生效
+   - @ConditionalOnClass        系统中有指定类才生效
+   - @ConditionalOnMissingClass 系统中没有指定的类才生效
+   - @ConditionalOnSingleCandidate 容器中只有一个指定的Bean，或这这个Bean是首选Bean才生效
+   - @ConditionalOnProperty  系统中指定的属性是否有指定值时生效
+     @Bean
+     @ConditionalOnProperty(prefix = "spring.mvc", name = "date-format") //表示配置了 spring.mvc.date-format 才生效
+     public Formatter<Date> dateFormatter() {
+        return new DateFormatter(this.mvcProperties.getDateFormat());
+     }
+   - @ConditionalOnResource  类路径下是否存在指定资源文件才生效
+   - @ConditionalOnWebApplication 当前时web环境才生效
+   - @ConditionalOnNotWebApplication 当前不是web环境才生效
+   - @ConditionalOnJndi      JNDI存在指定项才生效
