@@ -1,0 +1,154 @@
+1，在上一节中，我们直到了springboot加载配置文件的位置及优先级。现在从源码角度分析加载过程。
+2，我们来跟代码
+   SpringApplication.run(MainApplication.class, args);
+   进入run方法
+     public static ConfigurableApplicationContext run(Object source, String... args) {
+     		return run(new Object[] { source }, args);
+     }
+     在进入 run方法
+        public static ConfigurableApplicationContext run(Object[] sources, String[] args) {
+                // 创建 SpringApplication 实例，并执行run方法
+        		return new SpringApplication(sources).run(args);
+        }
+        进入 SpringApplication 构造器
+            public SpringApplication(Object... sources) {
+                // 进行一些实例的加载
+        		initialize(sources);
+        	}
+        	进入 initialize
+        	   private void initialize(Object[] sources) {
+               		if (sources != null && sources.length > 0) {
+               		    // 将配置类添加到 sources 集合中
+               			this.sources.addAll(Arrays.asList(sources));
+               		}
+               		// 判断类路径下是否包含 javax.servlet.Servlet 和 org.springframework.web.context.ConfigurableWebApplicationContext 类，
+               		// 包含则返回true，表示是web环境，否则为false
+               		this.webEnvironment = deduceWebEnvironment();
+
+                    // 从类路径下 META-INF/spring.factories 找到 org.springframework.context.ApplicationContextInitializer 的值，并用逗号分割后，实例化为集合
+                    // 然后通过 然后 setListeners 设置到 private List<ApplicationContextInitializer<?>> initializers; 中
+               		setInitializers((Collection) getSpringFactoriesInstances(\ApplicationContextInitializer.class));
+
+               		// 从类路径下 META-INF/spring.factories 找到 org.springframework.context.ApplicationListener 的值，并用逗号分割后，实例化为集合
+               		// 然后通过 然后 setListeners 设置到 private List<ApplicationListener<?>> listeners; 中
+               		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
+
+                    // 得到main所在类的实例（通过反射 Class.forName(stackTraceElement.getClassName())）
+               		this.mainApplicationClass = deduceMainApplicationClass();
+               	}
+
+            ===
+            进入 SpringApplication 实例的run 方法
+            public ConfigurableApplicationContext run(String... args) {
+                StopWatch stopWatch = new StopWatch();
+                stopWatch.start();
+                ConfigurableApplicationContext context = null;
+                FailureAnalyzers analyzers = null;
+                configureHeadlessProperty();
+
+                // 从类路径下 META-INF/spring.factories 找到 org.springframework.boot.SpringApplicationRunListener 的值，并用逗号分割后，实例化为集合
+                // 然后封装到 SpringApplicationRunListeners 对象的 private final List<SpringApplicationRunListener> listeners 中
+                // 默认情况下只有一个：org.springframework.boot.context.event.EventPublishingRunListener，所有这里是一个扩展点
+                SpringApplicationRunListeners listeners = getRunListeners(args);
+
+                // 遍历 SpringApplicationRunListeners 对象中的 listeners 集合，并调用他们的 listener.starting(); 方法
+                // 这里我们关注一下：EventPublishingRunListener 该类实现了 SpringApplicationRunListener 接口，所以会在这里被调用 starting() 方法
+                listeners.starting();
+
+                try {
+                    ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
+                    // prepareEnvironment 表示”准备环境“，细节看下面的方法详情
+                    ConfigurableEnvironment environment = prepareEnvironment(listeners,applicationArguments);
+                    Banner printedBanner = printBanner(environment);
+                    context = createApplicationContext();
+                    analyzers = new FailureAnalyzers(context);
+                    prepareContext(context, environment, listeners, applicationArguments,
+                            printedBanner);
+                    refreshContext(context);
+                    afterRefresh(context, applicationArguments);
+                    listeners.finished(context, null);
+                    stopWatch.stop();
+                    if (this.logStartupInfo) {
+                        new StartupInfoLogger(this.mainApplicationClass)
+                                .logStarted(getApplicationLog(), stopWatch);
+                    }
+                    return context;
+                }
+                catch (Throwable ex) {
+                    handleRunFailure(context, listeners, analyzers, ex);
+                    throw new IllegalStateException(ex);
+                }
+            }
+
+            // 进入 EventPublishingRunListener 的 starting 方法
+            public void starting() {
+                // 大致意思是 找到能处理 ApplicationStartedEvent 事件的Listener 列表，并调用他们的 invokeListener() 方法
+                // 默认情况下有如下几个能处理 ApplicationStartedEvent 事件的Listener
+                // 最后调用的是 这些Listener 的 onApplicationEvent 方法
+                // -- org.springframework.boot.logging.LoggingApplicationListener                          implements GenericApplicationListener
+                      GenericApplicationListener                                                           extends ApplicationListener<ApplicationEvent>, Ordered
+                // -- org.springframework.boot.autoconfigure.BackgroundPreinitializer                      implements ApplicationListener<SpringApplicationEvent>
+                // -- org.springframework.boot.context.config.DelegatingApplicationListener                implements ApplicationListener<ApplicationEvent>, Ordered
+                // -- org.springframework.boot.liquibase.LiquibaseServiceLocatorApplicationListener        implements ApplicationListener<ApplicationStartingEvent>
+            	this.initialMulticaster.multicastEvent(new ApplicationStartedEvent(this.application, this.args));
+            }
+
+            // 进入prepareEnvironment方法-准备环境
+            private ConfigurableEnvironment prepareEnvironment(SpringApplicationRunListeners listeners,ApplicationArguments applicationArguments) {
+                // 创建环境对象
+                ConfigurableEnvironment environment = getOrCreateEnvironment();
+                // 配置环境信息-看代码没有实质的操作
+                configureEnvironment(environment, applicationArguments.getSourceArgs());
+                // environmentPrepared 环境准备好的方法-该方法会广播一个 ApplicationEnvironmentPreparedEvent 事件，其实就是从 默认的监听器中找到能处理该事件的Listener，并调用他们的 onApplicationEvent 方法
+                // 找到的默认有如下 Listener
+                // -- org.springframework.boot.context.config.ConfigFileApplicationListener - 该监听器就是用来加载配置文件的
+                // -- org.springframework.boot.context.config.AnsiOutputApplicationListener
+                // -- org.springframework.boot.logging.LoggingApplicationListener
+                // -- org.springframework.boot.logging.ClasspathLoggingApplicationListener
+                // -- org.springframework.boot.autoconfigure.BackgroundPreinitializer
+                // -- org.springframework.boot.context.config.DelegatingApplicationListener
+                // -- org.springframework.boot.context.FileEncodingApplicationListener
+                // -- org.springframework.boot.context.config.ConfigFileApplicationListener
+                // -- org.springframework.boot.logging.LoggingApplicationListener
+                // -- org.springframework.boot.autoconfigure.BackgroundPreinitializer
+                // -- org.springframework.boot.context.config.DelegatingApplicationListener
+                listeners.environmentPrepared(environment);
+                if (!this.webEnvironment) {
+                    environment = new EnvironmentConverter(getClassLoader())
+                            .convertToStandardEnvironmentIfNecessary(environment);
+                }
+                return environment;
+            }
+
+            // 进入ConfigFileApplicationListener#onApplicationEvent方法
+            @Override
+            public void onApplicationEvent(ApplicationEvent event) {
+                // 当前事件是 ApplicationEnvironmentPreparedEvent 的实例
+                if (event instanceof ApplicationEnvironmentPreparedEvent) {
+                    //进入这个方法
+                    onApplicationEnvironmentPreparedEvent((ApplicationEnvironmentPreparedEvent) event);
+                }
+                if (event instanceof ApplicationPreparedEvent) {
+                    onApplicationPreparedEvent(event);
+                }
+            }
+            // 进入这个方法 onApplicationEnvironmentPreparedEvent((ApplicationEnvironmentPreparedEvent) event);
+            private void onApplicationEnvironmentPreparedEvent(ApplicationEnvironmentPreparedEvent event) {
+                // 查找META-INF/spring.factories文件里的 org.springframework.boot.env.EnvironmentPostProcessor 并通过反射实例化
+                // 默认能找到如下
+                // -- org.springframework.boot.env.SpringApplicationJsonEnvironmentPostProcessor
+                // -- org.springframework.boot.cloud.CloudFoundryVcapEnvironmentPostProcessor
+                List<EnvironmentPostProcessor> postProcessors = loadPostProcessors();
+                // -- 还会把自己放进入 org.springframework.boot.context.config.ConfigFileApplicationListener
+                postProcessors.add(this);
+                // 排序
+                AnnotationAwareOrderComparator.sort(postProcessors);
+                // 调用方法
+                for (EnvironmentPostProcessor postProcessor : postProcessors) {
+                    // 调用每个方法的 postProcessEnvironment
+                    postProcessor.postProcessEnvironment(event.getEnvironment(),event.getSpringApplication());
+                }
+            }
+
+               	......
+3，SpringBoot 从哪里开始加载配置文件？
