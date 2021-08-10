@@ -136,10 +136,10 @@
             private void onApplicationEnvironmentPreparedEvent(ApplicationEnvironmentPreparedEvent event) {
                 // 查找META-INF/spring.factories文件里的 org.springframework.boot.env.EnvironmentPostProcessor 并通过反射实例化
                 // 默认能找到如下
-                // -- org.springframework.boot.env.SpringApplicationJsonEnvironmentPostProcessor
-                // -- org.springframework.boot.cloud.CloudFoundryVcapEnvironmentPostProcessor
+                // -- org.springframework.boot.env.SpringApplicationJsonEnvironmentPostProcessor  这个暂时没发现有做了什么
+                // -- org.springframework.boot.cloud.CloudFoundryVcapEnvironmentPostProcessor     这个暂时不研究
                 List<EnvironmentPostProcessor> postProcessors = loadPostProcessors();
-                // -- 还会把自己放进入 org.springframework.boot.context.config.ConfigFileApplicationListener
+                // -- 还会把自己放进入 org.springframework.boot.context.config.ConfigFileApplicationListener  还是这个在加载配置文件
                 postProcessors.add(this);
                 // 排序
                 AnnotationAwareOrderComparator.sort(postProcessors);
@@ -148,6 +148,15 @@
                     // 调用每个方法的 postProcessEnvironment
                     postProcessor.postProcessEnvironment(event.getEnvironment(),event.getSpringApplication());
                 }
+            }
+
+            // 我们看 ConfigFileApplicationListener 的postProcessEnvironment
+            @Override
+            public void postProcessEnvironment(ConfigurableEnvironment environment,SpringApplication application) {
+                //该方法执行到后面会调用一个 load()方法
+                addPropertySources(environment, application.getResourceLoader());
+                configureIgnoreBeanInfo(environment);
+                bindToSpringApplication(environment, application);
             }
 
                	......
