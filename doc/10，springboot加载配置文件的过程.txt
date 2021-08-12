@@ -153,7 +153,20 @@
             // 我们看 ConfigFileApplicationListener 的postProcessEnvironment
             @Override
             public void postProcessEnvironment(ConfigurableEnvironment environment,SpringApplication application) {
-                //该方法执行到后面会调用一个 load()方法
+                //该方法执行到后面会调用一个 load()方法，该方法做了如下几件事情：
+                // 1，获取到配置文件的搜索目录，且顺序为：
+                //    - file:./config/
+                //    - file:./
+                //    - classpath:/config/
+                //    - classpath:/
+                // 2，获取到 配置文件的名字（默认的） application
+                // 3，获取配置文件的扩展名：其实是得到属性文件加载器所对应的扩展名：YamlPropertySourceLoader，PropertySourcesLoader，得到四个["properties", "xml","yml", "yaml"]
+                // 4，遍历 1中的目录，去寻找2的名称，扩展名为3的文件，如：
+                //    - file:./config/application.properties、
+                //    - file:./config/application.xml、
+                //    - file:./config/application.yml、
+                //    - file:./config/application.yaml
+                // 5，遍历到文件后，封装为 PropertiesPropertySource 对象（包装了 Properties 对象），如此属性文件就加载完了
                 addPropertySources(environment, application.getResourceLoader());
                 configureIgnoreBeanInfo(environment);
                 bindToSpringApplication(environment, application);
